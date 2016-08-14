@@ -53,7 +53,10 @@ script:
   - >
     sudo docker exec --tty "$(cat ${container_id})" \
       env TERM=xterm \
-      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml 
+      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
+        --extra-vars "mysql_root_password=root" \
+        --extra-vars "mysql_clipbucket_password=sql_test" \
+        --extra-vars "clipbucket_admin_password=cb_test"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
