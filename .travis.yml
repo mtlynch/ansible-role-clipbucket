@@ -53,8 +53,7 @@ script:
   - >
     sudo docker exec --tty "$(cat ${container_id})" \
       env TERM=xterm \
-      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
-        --syntax-check
+      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml 
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
