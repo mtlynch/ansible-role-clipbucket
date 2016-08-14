@@ -55,11 +55,8 @@
 
 - name: delete Apache default configuration files
   file:
-    path: "/etc/apache2/sites-enabled/{{ item }}"
+    path: /etc/apache2/sites-enabled/000-default.conf
     state: absent
-  with_items:
-    - 000-default.conf
-    - default-ssl.conf
 
 - name: install rewrite Apache2 module
   apache2_module:
@@ -91,7 +88,6 @@
   mysql_db:
     name: "{{ clipbucket_mysql_db }}"
     state: present
-  register: clipbucket_mysql_db_create
 
 - name: create ClipBucket MariaDB user
   mysql_user:
