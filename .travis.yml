@@ -23,6 +23,7 @@ script:
   - ansible-galaxy install -r tests/requirements.yml
   # Basic role syntax check
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  - pwd
   # Run linter
   - ansible-lint tests/test.yml --exclude geerlingguy.apache --exclude geerlingguy.php --exclude pcextreme.mariadb
 
