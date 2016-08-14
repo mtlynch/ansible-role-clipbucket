@@ -1,6 +1,9 @@
 Ansible Role: Clipbucket
 =========
 
+[![Build Status](https://travis-ci.org/mtlynch/ansible-role-clipbucket.svg?branch=master)](https://travis-ci.org/mtlynch/ansible-role-clipbucket)
+
+
 Installs Clipbucket on Ubuntu 14.04 servers.
 
 Role Variables
