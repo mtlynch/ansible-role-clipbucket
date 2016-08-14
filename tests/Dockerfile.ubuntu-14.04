@@ -1,0 +1,13 @@
+FROM ubuntu:14.04
+
+RUN apt-get update
+
+# Install Ansible
+RUN apt-get install -y python-dev libffi-dev python-pip git libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
+RUN pip install ansible
+RUN pip install ansible-lint
+
+# Install Ansible inventory file
+RUN mkdir /etc/ansible
+RUN echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
+
