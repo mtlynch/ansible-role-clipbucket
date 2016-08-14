@@ -1,22 +1,19 @@
 ---
 language: python
 python: "2.7"
-
-# Use the new container infrastructure
 sudo: false
-
-# Install ansible
 addons:
   apt:
     packages:
     - python-pip
 
 install:
-  # Install ansible
   - pip install ansible
+  - pip install ansible-lint==3.2.5
 
   # Check ansible version
   - ansible --version
+  - ansible-lint --version
 
   # Create ansible.cfg with correct roles_path
   - printf '[defaults]\nroles_path=../' >ansible.cfg
@@ -26,6 +23,12 @@ script:
   - ansible-galaxy install -r tests/requirements.yml
   # Basic role syntax check
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  # Run linter
+  - >
+    ansible-lint tests/test.yml \
+      --exclude ../geerlingguy.apache \
+      --exclude ../geerlingguy.php \
+      --exclude ../pcextreme.mariadb
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
