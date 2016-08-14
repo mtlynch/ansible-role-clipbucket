@@ -4,8 +4,7 @@ RUN apt-get update
 
 # Install Ansible
 RUN apt-get install -y python-dev libffi-dev python-pip git libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
-RUN pip install ansible
-RUN pip install ansible-lint
+RUN pip install ansible ansible-lint paramiko PyYAML Jinja2 httplib2 six
 
 # Install Ansible inventory file
 RUN mkdir /etc/ansible
