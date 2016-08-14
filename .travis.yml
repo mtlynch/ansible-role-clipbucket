@@ -2,11 +2,6 @@
 language: python
 python: "2.7"
 sudo: false
-addons:
-  apt:
-    packages:
-    - python-pip
-
 install:
   - pip install ansible
   - pip install ansible-lint==3.2.5
