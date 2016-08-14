@@ -24,7 +24,11 @@ script:
   # Basic role syntax check
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
   # Run linter
-  - ansible-lint tests/test.yml --exclude ../geerlingguy.apache --exclude ../geerlingguy.php --exclude ../pcextreme.mariadb
+  - >
+    ansible-lint tests/test.yml
+      --exclude ../geerlingguy.apache
+      --exclude ../geerlingguy.php
+      --exclude ../pcextreme.mariadb
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
