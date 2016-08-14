@@ -25,9 +25,9 @@ script:
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
   # Run linter
   - >
-    ansible-lint tests/test.yml
-      --exclude ../geerlingguy.apache
-      --exclude ../geerlingguy.php
+    ansible-lint tests/test.yml \
+      --exclude ../geerlingguy.apache \
+      --exclude ../geerlingguy.php \
       --exclude ../pcextreme.mariadb
 
 notifications:
