@@ -35,14 +35,14 @@ script:
 
   # Ansible syntax check.
   - >
-    sudo docker exec --tty "$(cat ${container_id})" \
+    sudo docker exec "$(cat ${container_id})" \
       env TERM=xterm \
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --syntax-check
 
   # Ansible lint check.
   - >
-    sudo docker exec --tty "$(cat ${container_id})" \
+    sudo docker exec "$(cat ${container_id})" \
       env TERM=xterm \
       ansible-lint /etc/ansible/roles/role_under_test/tests/test.yml \
         --exclude /etc/ansible/roles/geerlingguy.apache \
@@ -51,8 +51,7 @@ script:
 
   # Check that role installs successfully.
   - >
-    travis_wait 45 \
-    sudo docker exec --tty "$(cat ${container_id})" \
+    sudo docker exec "$(cat ${container_id})" \
       env TERM=xterm \
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --extra-vars "mysql_root_password=root" \
