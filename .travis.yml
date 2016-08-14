@@ -35,21 +35,26 @@ script:
 
   # Ansible syntax check.
   - >
-    sudo docker exec \
-      --tty "$(cat ${container_id})" \
+    sudo docker exec --tty "$(cat ${container_id})" \
       env TERM=xterm \
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --syntax-check
 
   # Ansible lint check.
   - >
-    sudo docker exec \
-      --tty "$(cat ${container_id})" \
+    sudo docker exec --tty "$(cat ${container_id})" \
       env TERM=xterm \
       ansible-lint /etc/ansible/roles/role_under_test/tests/test.yml \
         --exclude /etc/ansible/roles/geerlingguy.apache \
         --exclude /etc/ansible/roles/geerlingguy.php \
         --exclude /etc/ansible/roles/pcextreme.mariadb
+
+  # Check that role installs successfully.
+  - >
+    sudo docker exec --tty "$(cat ${container_id})" \
+      env TERM=xterm \
+      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
+        --syntax-check
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
