@@ -1,0 +1,29 @@
+---
+mysql_secure_installation: true
+mysql_root_password: root
+
+clipbucket_site_domain: example.com
+clipbucket_site_alias: www.{{ clipbucket_site_domain }}
+clipbucket_git_version: 4470
+clipbucket_tmp_path: /tmp/clipbucket
+clipbucket_path: /var/www/clipbucket
+clipbucket_install_dir: "{{ clipbucket_path }}/cb_install"
+clipbucket_sql_dir: "{{ clipbucket_install_dir }}/sql"
+clipbucket_sql_scripts:
+  - "{{ clipbucket_sql_dir }}/structure.sql"
+  - "{{ clipbucket_sql_dir }}/configs.sql"
+  - "{{ clipbucket_sql_dir }}/ads_placements.sql"
+  - "{{ clipbucket_sql_dir }}/countries.sql"
+  - "{{ clipbucket_sql_dir }}/email_templates.sql"
+  - "{{ clipbucket_sql_dir }}/pages.sql"
+  - "{{ clipbucket_sql_dir }}/user_levels.sql"
+  - "{{ clipbucket_sql_dir }}/add_admin.sql"
+  - "{{ clipbucket_sql_dir }}/categories.sql"
+clipbucket_mysql_db: clipbucketdb
+clipbucket_mysql_user: clipbucketuser
+clipbucket_mysql_prefix: cb_
+clipbucket_admin_user: admin
+clipbucket_admin_password_hash: "{{ clipbucket_admin_password | hash('md5') | hash('sha1') | hash('sha1') | hash('md5') | hash('md5') }}"
+clipbucket_apache_user: "{{ php_fpm_pool_user }}"
+clipbucket_apache_group: "{{ php_fpm_pool_group }}"
+

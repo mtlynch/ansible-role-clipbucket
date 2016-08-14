@@ -1,0 +1,58 @@
+---
+# Workaround for errors in the Clipbucket install scripts.
+# See: https://github.com/arslancb/clipbucket/issues/223
+
+- name: fix structure script 1
+  lineinfile: dest={{ clipbucket_sql_dir }}/structure.sql
+              regexp="`{tbl_prefix}_groups`"
+              state=absent
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix structure script 2
+  lineinfile: dest={{ clipbucket_sql_dir }}/structure.sql
+              regexp="ALTER TABLE `photos`"
+              state=absent
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix structure script 2
+  lineinfile: dest={{ clipbucket_sql_dir }}/structure.sql
+              regexp="ALTER TABLE .+photos.+`file_directory`"
+              state=absent
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix structure script 4
+  replace: dest={{ clipbucket_sql_dir }}/structure.sql
+           regexp="CREATE TABLE `"
+           replace="CREATE TABLE IF NOT EXISTS `"
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix structure script 5
+  lineinfile: dest={{ clipbucket_sql_dir }}/structure.sql
+              regexp="ALTER TABLE .+video.+`(video_version)|(extras)`"
+              state=absent
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix structure script 6
+  lineinfile: dest={{ clipbucket_sql_dir }}/structure.sql
+              regexp="ALTER TABLE .+video.+`file_directory`.+10"
+              state=absent
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix structure script 7
+  lineinfile: dest={{ clipbucket_sql_dir }}/structure.sql
+              regexp="ALTER TABLE .+collection_categories.+`parent_id`"
+              state=absent
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix config script
+  lineinfile: dest={{ clipbucket_sql_dir }}/configs.sql
+              regexp="vbrate_hd"
+              line="(2260, 'vbrate_hd', '500000');"
+              state=present
+  when: "{{ install_file.stat.exists }}"
+
+- name: fix user_levels script
+  lineinfile: dest={{ clipbucket_sql_dir }}/user_levels.sql
+              regexp="allow_manage_user_level"
+              state=absent
+  when: "{{ install_file.stat.exists }}"

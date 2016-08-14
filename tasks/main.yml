@@ -1,0 +1,144 @@
+---
+- name: add PPA for ffmpeg
+  apt_repository: repo='ppa:mc3man/trusty-media'
+
+- name: install ClipBucket dependency packages
+  apt:
+    name: "{{item}}"
+    state: installed
+  with_items:
+       - ffmpeg
+       - git
+       - gpac
+       - gstreamer0.10-ffmpeg
+       - imagemagick
+       - mediainfo
+       - python-dev
+       - python-mysqldb
+       - python-pip
+       - ruby
+       - unzip
+
+- name: install ImageMagick php modules
+  command: php5enmod imagick
+  args:
+    creates: "{{ php_extension_conf_paths[2] }}/20-imagick.ini"
+
+- name: install FLVTool2
+  gem:
+    name: flvtool2
+    state: present
+
+- name: create a symlink for ClipBucket to find ffmpeg
+  file:
+    path: /usr/local/bin/ffmpeg
+    src: /usr/bin/ffmpeg
+    state: link
+
+- name: install the Python MySQLB module
+  pip: name=MySQL-python
+
+- name: copy ClipBucket Apache configuration file
+  template:
+    src: clipbucket.conf.j2
+    dest: /etc/apache2/sites-available/clipbucket.conf
+    owner: "{{ clipbucket_apache_user }}"
+    group: "{{ clipbucket_apache_group }}"
+
+- name: create symlink to enable site
+  file:
+    path: /etc/apache2/sites-enabled/clipbucket.conf
+    src: /etc/apache2/sites-available/clipbucket.conf
+    state: link
+    owner: "{{ clipbucket_apache_user }}"
+    group: "{{ clipbucket_apache_group }}"
+
+- name: delete Apache default configuration files
+  file:
+    path: "/etc/apache2/sites-enabled/{{ item }}"
+    state: absent
+  with_items:
+    - 000-default.conf
+    - default-ssl.conf
+
+- name: install rewrite Apache2 module
+  apache2_module:
+    name: rewrite
+    state: present
+  notify:
+    - restart webserver
+
+- name: download ClipBucket source
+  git:
+    repo: https://github.com/arslancb/clipbucket.git
+    dest: "{{ clipbucket_tmp_path }}"
+    version: "{{ clipbucket_git_version }}"
+  register: clipbucket_git
+
+- name: copy ClipBucket source to serving location
+  command: cp -r {{ clipbucket_tmp_path }}/upload {{ clipbucket_path }}
+  when: clipbucket_git.changed
+
+- name: set file permissions
+  file:
+    path: "{{ clipbucket_path }}"
+    owner: "{{ clipbucket_apache_user }}"
+    group: "{{ clipbucket_apache_group }}"
+    recurse: yes
+    state: directory
+
+- name: create ClipBucket MySQL database
+  mysql_db:
+    name: "{{ clipbucket_mysql_db }}"
+    state: present
+  register: clipbucket_mysql_db_create
+
+- name: create ClipBucket MariaDB user
+  mysql_user:
+    name: "{{ clipbucket_mysql_user }}"
+    password: "{{ mysql_clipbucket_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+
+- name: copy MariaDB connection script
+  template:
+    src: dbconnect.php.j2
+    dest: "{{ clipbucket_path }}/includes/dbconnect.php"
+
+- name: check for install directory
+  stat: path={{ clipbucket_path }}/files/temp/install.me
+  register: install_file
+
+# Apply workarounds for errors in SQL scripts, see:
+# https://github.com/arslancb/clipbucket/issues/223
+- include: fix-sql-scripts.yml
+
+- name: copy admin script
+  template:
+    src: add_admin.sql.j2
+    dest: "{{ clipbucket_sql_dir }}/add_admin.sql"
+  when: "{{ install_file.stat.exists }}"
+
+- name: replace table prefix placeholder string in SQL scripts
+  replace:
+    dest: "{{ item }}"
+    regexp: "{tbl_prefix}_?"
+    replace: "{{ clipbucket_mysql_prefix }}"
+  with_items: "{{ clipbucket_sql_scripts }}"
+  when: "{{ install_file.stat.exists }}"
+
+- name: run SQL scripts
+  mysql_db:
+    name: "{{ clipbucket_mysql_db }}"
+    state: import
+    target: "{{ item }}"
+  with_items: "{{ clipbucket_sql_scripts }}"
+  when: "{{ install_file.stat.exists }}"
+
+- name: remove install files
+  file:
+    path: "{{ item }}"
+    state: "absent"
+  with_items:
+    - "{{ clipbucket_path }}/files/temp/install.me"
+    - "{{ clipbucket_install_dir }}"

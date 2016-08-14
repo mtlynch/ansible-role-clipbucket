@@ -1,0 +1,13 @@
+<?php
+
+$BDTYPE = 'mysql';
+$DBHOST = 'localhost';
+$DBNAME = '{{ clipbucket_mysql_db }}';
+$DBUSER = '{{ clipbucket_mysql_user }}';
+$DBPASS = '{{ mysql_clipbucket_password }}';
+define('TABLE_PREFIX','cb_');
+
+$db = new Clipbucket_db();
+$db->connect($DBHOST,$DBNAME,$DBUSER,$DBPASS);
+?>
+

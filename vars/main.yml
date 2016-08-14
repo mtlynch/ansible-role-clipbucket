@@ -1,0 +1,26 @@
+---
+php_packages:
+  - php5
+  - php5-apcu
+  - php5-cli
+  - php5-curl
+  - php5-gd
+  - php5-imagick
+  - php5-mysqlnd
+  - php5-xsl
+  - php-pear
+php_conf_paths:
+  - /etc/php5/fpm
+  - /etc/php5/apache2
+  - /etc/php5/cli
+php_extension_conf_paths:
+  - /etc/php5/fpm/conf.d
+  - /etc/php5/apache2/conf.d
+  - /etc/php5/cli/conf.d
+
+php_memory_limit: "256M"
+php_max_execution_time: "10000"
+php_max_input_time: "300"
+php_post_max_size: "1024M"
+php_upload_max_filesize: "1024M"
+

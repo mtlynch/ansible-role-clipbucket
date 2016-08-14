@@ -1,0 +1,12 @@
+<VirtualHost *:80>
+  ServerAdmin admin@{{ clipbucket_site_domain }}
+  DocumentRoot {{ clipbucket_path }}/
+  ServerName {{ clipbucket_site_domain }}
+  ServerAlias {{ clipbucket_site_alias }}
+  <Directory {{ clipbucket_path }}/>
+    Options -FollowSymLinks -Indexes -Includes -ExecCGI
+    AllowOverride All
+  </Directory>
+  ErrorLog /var/log/apache2/{{ clipbucket_site_domain }}-error_log
+  CustomLog /var/log/apache2/{{ clipbucket_site_domain }}-access_log common
+</VirtualHost>
