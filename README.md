@@ -32,7 +32,10 @@ To run the example playbook, `example.yml` run the commands below:
 
 ```bash
 ansible-galaxy install mtlynch.clipbucket
-ansible-playbook example.yml --extra-vars "mysql_root_password=root mysql_clipbucket_password=secret_db_password clipbucket_admin_password=admin"
+ansible-playbook example.yml \
+  --extra-vars "mysql_root_password=root" \
+  --extra-vars "mysql_clipbucket_password=secret_db_password" \
+  --extra-vars "clipbucket_admin_password=admin"
 ```
 
 After executing the command above on a node called `clipbucket`, you would then navigate to http://clipbucket/ and log in using the credentials `admin` / `admin`.
