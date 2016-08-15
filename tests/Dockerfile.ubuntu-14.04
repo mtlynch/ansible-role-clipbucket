@@ -3,7 +3,7 @@ FROM ubuntu:14.04
 RUN apt-get update
 
 # Install Ansible
-RUN apt-get install -y python-dev libffi-dev python-pip git libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
+RUN apt-get install -y python-dev libffi-dev python-pip git libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev libyaml-dev libpython2.7-dev
 RUN pip install ansible ansible-lint paramiko PyYAML Jinja2 httplib2 six
 
 # Install Ansible inventory file
