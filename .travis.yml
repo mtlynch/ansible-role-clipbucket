@@ -65,10 +65,7 @@ script:
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --extra-vars "mysql_root_password=root" \
         --extra-vars "mysql_clipbucket_password=sql_test" \
-        --extra-vars "clipbucket_admin_password=cb_test" 
-     | grep -q 'changed=0.*failed=0'
-     && (echo 'Idempotence test: pass' && exit 0)
-     || (echo 'Idempotence test: fail' && exit 1)
+        --extra-vars "clipbucket_admin_password=cb_test" | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
 
   # Clean up
   - sudo docker stop "$(cat ${container_id})"
