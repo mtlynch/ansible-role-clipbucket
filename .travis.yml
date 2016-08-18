@@ -25,7 +25,7 @@ script:
     sudo docker run \
       --detach \
       --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
-      ${distribution}-${version}:ansible ${init} > $(id_file)
+      ${distribution}-${version}:ansible ${init} > "${id_file}"
   - container_id="$(cat $id_file)"
   - echo "${container_id}"
 
