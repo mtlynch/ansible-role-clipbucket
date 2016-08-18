@@ -75,6 +75,7 @@
 - name: copy ClipBucket source to serving location
   command: cp -r {{ clipbucket_tmp_path }}/upload {{ clipbucket_path }}
   when: clipbucket_git.changed
+  register: copy_source
 
 - name: set file permissions
   file:
@@ -83,6 +84,7 @@
     group: "{{ clipbucket_apache_group }}"
     recurse: yes
     state: directory
+  when: copy_source.changed
 
 - name: create ClipBucket MySQL database
   mysql_db:
