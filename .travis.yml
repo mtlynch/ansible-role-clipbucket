@@ -26,7 +26,7 @@ script:
       --detach \
       --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
       ${distribution}-${version}:ansible ${init} > $(id_file)
-  - container_id="$(id_file)"
+  - container_id="$(cat $id_file)"
 
   # Install dependencies.
   - >
