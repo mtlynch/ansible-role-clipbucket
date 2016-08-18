@@ -70,9 +70,9 @@ script:
 
   # Check that Clipbucket landing page is up
   - ip_file=$(mktemp)
-  - sudo docker inspect ${container_id} | python -c "import sys, json; print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']" > $ip_file
+  - sudo docker inspect "${container_id}" | python -c "import sys, json; print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']" > $ip_file
   - container_ip="$(cat $ip_file)"
-  - curl -s "$(container_ip)"  | grep "Login"
+  - curl -s "${container_ip}"  | grep "Login"
 
 
   # Clean up
