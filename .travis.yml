@@ -27,6 +27,7 @@ script:
       --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
       ${distribution}-${version}:ansible ${init} > $(id_file)
   - container_id="$(cat $id_file)"
+  - echo "${container_id}"
 
   # Install dependencies.
   - >
@@ -72,6 +73,7 @@ script:
   - ip_file=$(mktemp)
   - sudo docker inspect "${container_id}" | python -c "import sys, json; print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']" > $ip_file
   - container_ip="$(cat $ip_file)"
+  - echo "${container_ip}"
   - curl -s "${container_ip}"  | grep "Login"
 
 
