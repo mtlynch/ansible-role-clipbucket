@@ -10,3 +10,4 @@ RUN pip install ansible ansible-lint paramiko PyYAML Jinja2 httplib2 six
 RUN mkdir /etc/ansible
 RUN echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
 
+EXPOSE 80
