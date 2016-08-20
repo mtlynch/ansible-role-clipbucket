@@ -21,6 +21,7 @@ clipbucket_sql_scripts:
   - "{{ clipbucket_sql_dir }}/categories.sql"
 clipbucket_mysql_db: clipbucketdb
 clipbucket_mysql_user: clipbucketuser
+clipbucket_mysql_password: clipbucketpw
 clipbucket_mysql_prefix: cb_
 clipbucket_admin_user: admin
 clipbucket_admin_password_hash: "{{ clipbucket_admin_password | hash('md5') | hash('sha1') | hash('sha1') | hash('md5') | hash('md5') }}"

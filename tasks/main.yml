@@ -94,7 +94,7 @@
 - name: create ClipBucket MariaDB user
   mysql_user:
     name: "{{ clipbucket_mysql_user }}"
-    password: "{{ mysql_clipbucket_password }}"
+    password: "{{ clipbucket_mysql_password }}"
     priv: "*.*:ALL,GRANT"
     state: present
 

@@ -55,19 +55,13 @@ script:
   - >
     sudo docker exec "${container_id}" \
       env TERM=xterm \
-      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
-        --extra-vars "mysql_root_password=root" \
-        --extra-vars "mysql_clipbucket_password=sql_test" \
-        --extra-vars "clipbucket_admin_password=cb_test"
+      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml
 
   # Test role idempotence.
   - >
     sudo docker exec "${container_id}" \
       env TERM=xterm \
-      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
-        --extra-vars "mysql_root_password=root" \
-        --extra-vars "mysql_clipbucket_password=sql_test" \
-        --extra-vars "clipbucket_admin_password=cb_test" | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+      ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
 
   # Check that Clipbucket landing page is up
   - ip_file=$(mktemp)
