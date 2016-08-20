@@ -9,13 +9,37 @@ Installs Clipbucket on Ubuntu 14.04 servers.
 
 ## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Available variables are listed below, along with default values (see [defaults/main.yml](defaults/main.yml)):
+
+```yaml
+clipbucket_site_domain: example.com
+```
+
+```yaml
+clipbucket_git_version: 4470
+```
+
+```yaml
+clipbucket_path: /var/www/clipbucket
+```
+
+```yaml
+clipbucket_mysql_db: clipbucketdb
+clipbucket_mysql_user: clipbucketuser
+clipbucket_mysql_prefix: cb_
+```
+
+```yaml
+clipbucket_admin_user: admin
+clipbucket_admin_password: 
+```
+
 
 ## Dependencies
 
-* geerlingguy.apache
-* geerlingguy.php
-* pcextreme.mariadb
+* [geerlingguy.apache](https://galaxy.ansible.com/geerlingguy/apache/)
+* [geerlingguy.php](https://galaxy.ansible.com/geerlingguy/php/)
+* [pcextreme.mariadb](https://galaxy.ansible.com/detail#/role/2462)
 
 ## Example Playbook
 
@@ -28,7 +52,7 @@ A description of the settable variables for this role should go here, including 
 ```
 ### Running Example Playbook
 
-To run the example playbook, `example.yml` run the commands below:
+To run the example playbook, `example.yml` (above) run the commands below:
 
 ```bash
 ansible-galaxy install mtlynch.clipbucket
@@ -38,7 +62,7 @@ ansible-playbook example.yml \
   --extra-vars "clipbucket_admin_password=admin"
 ```
 
-After executing the command above on a node called `clipbucket`, you would then navigate to http://clipbucket/ and log in using the credentials `admin` / `admin`.
+After executing the command above on a node called `clipbucket`, you would then navigate to [http://clipbucket/](http://clipbucket/) and log in using the credentials `admin` / `admin`.
 
 In a playbook for a production server, you should create a `secrets.yml` file instead of specifying passwords on the command line and you should choose strong passwords instead of the examples.
 
