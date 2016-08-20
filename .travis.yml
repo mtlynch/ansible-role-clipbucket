@@ -19,30 +19,32 @@ before_install:
       --tag=${distribution}-${version}:ansible tests
 
 script:
-  - container_id=$(mktemp)
   # Run container in detached state
+  - id_file=$(mktemp)
   - >
     sudo docker run \
       --detach \
       --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
-      ${distribution}-${version}:ansible "${init}" > "${container_id}"
+      ${distribution}-${version}:ansible ${init} > "${id_file}"
+  - container_id="$(cat $id_file)"
+  - echo "${container_id}"
 
   # Install dependencies.
   - >
-    sudo docker exec "$(cat ${container_id})" \
+    sudo docker exec "${container_id}" \
       ansible-galaxy install \
         -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 
   # Ansible syntax check.
   - >
-    sudo docker exec "$(cat ${container_id})" \
+    sudo docker exec "${container_id}" \
       env TERM=xterm \
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --syntax-check
 
   # Ansible lint check.
   - >
-    sudo docker exec "$(cat ${container_id})" \
+    sudo docker exec "${container_id}" \
       env TERM=xterm \
       ansible-lint /etc/ansible/roles/role_under_test/tests/test.yml \
         --exclude /etc/ansible/roles/geerlingguy.apache \
@@ -51,7 +53,7 @@ script:
 
   # Check that role installs successfully.
   - >
-    sudo docker exec "$(cat ${container_id})" \
+    sudo docker exec "${container_id}" \
       env TERM=xterm \
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --extra-vars "mysql_root_password=root" \
@@ -60,15 +62,23 @@ script:
 
   # Test role idempotence.
   - >
-    sudo docker exec "$(cat ${container_id})" \
+    sudo docker exec "${container_id}" \
       env TERM=xterm \
       ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
         --extra-vars "mysql_root_password=root" \
         --extra-vars "mysql_clipbucket_password=sql_test" \
         --extra-vars "clipbucket_admin_password=cb_test" | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
 
+  # Check that Clipbucket landing page is up
+  - ip_file=$(mktemp)
+  - sudo docker inspect "${container_id}" | python -c "import sys, json; print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']" > $ip_file
+  - container_ip="$(cat $ip_file)"
+  - echo "${container_ip}"
+  - curl -s "${container_ip}"  | grep "Login"
+
+
   # Clean up
-  - sudo docker stop "$(cat ${container_id})"
+  - sudo docker stop "${container_id}"
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
