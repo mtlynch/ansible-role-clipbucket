@@ -4,18 +4,54 @@
 [![Ansible Galaxy](https://img.shields.io/badge/ansible--galaxy-clipbucket-blue.svg?style=flat-square)](https://galaxy.ansible.com/mtlynch/clipbucket)
 [![License](http://img.shields.io/:license-apache-blue.svg?style=flat-square)](LICENSE)
 
-
-Installs Clipbucket on Ubuntu 14.04 servers.
+Installs the [Clipbucket](https://github.com/arslancb/clipbucket) video platform on Ubuntu 14.04 servers.
 
 ## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Available variables are listed below, along with default values (see [defaults/main.yml](defaults/main.yml)):
+
+```yaml
+clipbucket_admin_user: admin
+clipbucket_admin_password: admin
+```
+
+The credentials for the Clipbucket admin user in the Clipbucket web app.
+
+```yaml
+clipbucket_git_version: 4470
+```
+
+The git release tag to use for the Clipbucket installation. A full list of Clipbucket release tags can be found at the [Clipbucket releases page](https://github.com/arslancb/clipbucket/releases).
+
+```yaml
+clipbucket_site_domain: example.com
+```
+
+The domain on which Clipbucket is running.
+
+
+```yaml
+clipbucket_path: /var/www/clipbucket
+```
+
+The filesystem path to which Clipbucket should be installed.
+
+
+```yaml
+clipbucket_mysql_db: clipbucketdb
+clipbucket_mysql_user: clipbucketuser
+clipbucket_mysql_password: clipbucketpw
+clipbucket_mysql_prefix: cb_
+```
+
+The MySQL/MariaDB database settings for the Clipbucket database.
+
 
 ## Dependencies
 
-* geerlingguy.apache
-* geerlingguy.php
-* pcextreme.mariadb
+* [geerlingguy.apache](https://galaxy.ansible.com/geerlingguy/apache/)
+* [geerlingguy.php](https://galaxy.ansible.com/geerlingguy/php/)
+* [pcextreme.mariadb](https://galaxy.ansible.com/detail#/role/2462)
 
 ## Example Playbook
 
@@ -28,17 +64,14 @@ A description of the settable variables for this role should go here, including 
 ```
 ### Running Example Playbook
 
-To run the example playbook, `example.yml` run the commands below:
+To run the example playbook, `example.yml` (above) run the commands below:
 
 ```bash
 ansible-galaxy install mtlynch.clipbucket
-ansible-playbook example.yml \
-  --extra-vars "mysql_root_password=root" \
-  --extra-vars "mysql_clipbucket_password=secret_db_password" \
-  --extra-vars "clipbucket_admin_password=admin"
+ansible-playbook example.yml
 ```
 
-After executing the command above on a node called `clipbucket`, you would then navigate to http://clipbucket/ and log in using the credentials `admin` / `admin`.
+After executing the command above on a node called `clipbucket`, you would then navigate to [http://clipbucket/](http://clipbucket/) and log in using the credentials `admin` / `admin`.
 
 In a playbook for a production server, you should create a `secrets.yml` file instead of specifying passwords on the command line and you should choose strong passwords instead of the examples.
 
