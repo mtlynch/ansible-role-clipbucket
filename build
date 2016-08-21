@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# Exit immediately on error
 set -e
 
 # Pull existing container
