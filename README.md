@@ -18,7 +18,8 @@ clipbucket_admin_password: admin
 The credentials for the Clipbucket admin user in the Clipbucket web app.
 
 ```yaml
-clipbucket_git_version: 4470
+# 4476 => ClipBucket 2.8.1 Stable
+clipbucket_git_version: 4476
 ```
 
 The git release tag to use for the Clipbucket installation. A full list of Clipbucket release tags can be found at the [Clipbucket releases page](https://github.com/arslancb/clipbucket/releases).
