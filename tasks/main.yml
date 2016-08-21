@@ -110,6 +110,7 @@
 # Apply workarounds for errors in SQL scripts, see:
 # https://github.com/arslancb/clipbucket/issues/223
 - include: fix-sql-scripts.yml
+  when: "{{ install_file.stat.exists }}"
 
 - name: copy admin script
   template:
