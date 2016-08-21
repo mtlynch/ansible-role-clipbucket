@@ -1,16 +1,4 @@
-FROM ubuntu:14.04
-
-RUN apt-get update
-
-# Install Ansible
-RUN apt-get install -y \
-  libffi-dev \
-  libyaml-dev \
-  libpython2.7-dev \
-  libssl-dev \
-  python-pip \
-  python2.7-dev
-RUN pip install ansible ansible-lint paramiko PyYAML Jinja2 httplib2 six
+FROM williamyeh/ansible:ubuntu14.04-onbuild
 
 # Install Ansible inventory file
 RUN mkdir /etc/ansible
