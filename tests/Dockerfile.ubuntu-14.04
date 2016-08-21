@@ -1,19 +1,11 @@
-FROM ubuntu:14.04
-
-RUN apt-get update
-
-# Install Ansible
-RUN apt-get install -y \
-  libffi-dev \
-  libyaml-dev \
-  libpython2.7-dev \
-  libssl-dev \
-  python-pip \
-  python2.7-dev
-RUN pip install ansible ansible-lint paramiko PyYAML Jinja2 httplib2 six
+FROM williamyeh/ansible:ubuntu14.04-onbuild
 
 # Install Ansible inventory file
-RUN mkdir /etc/ansible
 RUN echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
+
+# Install ansible-lint
+RUN apt-get update
+RUN apt-get install -y python-pip
+RUN pip install ansible-lint
 
 EXPOSE 80
