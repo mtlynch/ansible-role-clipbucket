@@ -1,7 +1,6 @@
 FROM williamyeh/ansible:ubuntu14.04-onbuild
 
 # Install Ansible inventory file
-RUN mkdir /etc/ansible
 RUN echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
 
 EXPOSE 80
