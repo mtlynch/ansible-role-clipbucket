@@ -47,7 +47,7 @@
 - name: fix structure script 8
   lineinfile:
     dest: "{{ clipbucket_sql_dir }}/structure.sql"
-    regexp: "ALTER TABLE .+`video_files` text(33)"
+    regexp: "ALTER TABLE .+`video_files` text.33."
     state: absent
 
 - name: fix config script
