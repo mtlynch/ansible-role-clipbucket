@@ -61,7 +61,7 @@ The MySQL/MariaDB database settings for the Clipbucket database.
 ```yaml
 - hosts: clipbucket
   roles:
-    - { role: clipbucket }
+    - { role: mtlynch.clipbucket }
 ```
 ### Running Example Playbook
 
