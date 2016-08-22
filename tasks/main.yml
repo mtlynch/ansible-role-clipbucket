@@ -141,3 +141,20 @@
   with_items:
     - "{{ clipbucket_path }}/files/temp/install.me"
     - "{{ clipbucket_install_dir }}"
+
+- name: add conversion cronjob
+  cron:
+    name: convert video
+    job: "/usr/bin/php -q {{ clipbucket_path }}/actions/video_convert.php"
+
+- name: add verification cronjob
+  cron:
+    name: verify video conversion
+    job: "/usr/bin/php -q {{ clipbucket_path }}/actions/verify_converted_videos.php"
+
+- name: add stats cronjob
+  cron:
+    name: update ClibBucket stats
+    job: "/usr/bin/php -q {{ clipbucket_path }}/actions/update_cb_stats.php"
+    minute: 0
+    hour: 0,12,13
