@@ -4,4 +4,4 @@ export distribution=ubuntu
 export version=14.04
 export init=/sbin/init
 
-./build
+bash -x ./build

@@ -1,3 +1,6 @@
+#!/bin/sh
+
+# Exit immediately on error
 set -e
 
 # Pull existing container
@@ -11,13 +14,12 @@ sudo docker build \
 
 # Run container in detached state
 id_file=$(mktemp)
-
 sudo docker run \
   --detach \
   --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
   ${distribution}-${version}:ansible ${init} > "${id_file}"
 container_id="$(cat $id_file)"
-echo "${container_id}"
+echo "Container ID:" "${container_id}"
 
 # Install dependencies.
 sudo docker exec "${container_id}" \
@@ -44,16 +46,26 @@ sudo docker exec "${container_id}" \
   ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml
 
 # Test role idempotence.
+idempotence_file=$(mktemp)
 sudo docker exec "${container_id}" \
   env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+  ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
+  | tee "${idempotence_file}"
+grep -q 'changed=0.*failed=0' "${idempotence_file}" && \
+  (echo 'Idempotence test: pass' && exit 0) || \
+  (echo 'Idempotence test: fail' && exit 1)
 
 # Check that Clipbucket landing page is up
-ip_file=$(mktemp)
-sudo docker inspect "${container_id}" | python -c "import sys, json; print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']" > $ip_file
-container_ip="$(cat $ip_file)"
-echo "${container_ip}"
-curl -s "${container_ip}"  | grep "Login"
+print_ip_python=$(echo "import sys, json;
+print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']")
+container_ip=$(sudo docker inspect "${container_id}" | \
+  python -c "${print_ip_python}")
+echo "Container IP Address:" "${container_ip}"
+curl -s "${container_ip}"  \
+  | grep "Login" && \
+  (echo 'Landing page test: pass' && exit 0) || \
+  (echo 'Landing page test: fail' && exit 1)
 
 # Clean up
 sudo docker stop "${container_id}"
+sudo docker rm "${container_id}"
