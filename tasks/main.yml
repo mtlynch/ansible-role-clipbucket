@@ -41,21 +41,21 @@
 - name: copy ClipBucket Apache configuration file
   template:
     src: clipbucket.conf.j2
-    dest: /etc/apache2/sites-available/clipbucket.conf
+    dest: "{{ apache_conf_path }}/sites-available/clipbucket.conf"
     owner: "{{ clipbucket_apache_user }}"
     group: "{{ clipbucket_apache_group }}"
 
 - name: create symlink to enable site
   file:
-    path: /etc/apache2/sites-enabled/clipbucket.conf
-    src: /etc/apache2/sites-available/clipbucket.conf
+    path: "{{ apache_conf_path }}/sites-enabled/clipbucket.conf"
+    src: "{{ apache_conf_path }}/sites-available/clipbucket.conf"
     state: link
     owner: "{{ clipbucket_apache_user }}"
     group: "{{ clipbucket_apache_group }}"
 
 - name: delete Apache default configuration files
   file:
-    path: /etc/apache2/sites-enabled/000-default.conf
+    path: "{{ apache_conf_path }}/sites-enabled/000-default.conf"
     state: absent
 
 - name: install rewrite Apache2 module
