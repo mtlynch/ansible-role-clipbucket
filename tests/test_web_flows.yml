@@ -1,0 +1,44 @@
+---
+- hosts: localhost
+  remote_user: root
+  vars:
+    # Name of virtual display in which to run browser (via xvfb).
+    - virtual_display: :1
+  vars_files:
+    - test_secrets.yml
+  roles:
+    - arknoll.firefox
+  tasks:
+    - name: install apt packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - python
+        - python-pip
+        - xvfb
+
+    - name: install selenium
+      pip: name=selenium
+
+    - name: install xvfb init.d daemon script
+      tags: xvfb
+      template:
+        src: templates/xvfb-init.d.j2
+        dest: /etc/init.d/xvfb
+        mode: 0755
+
+    - name: start xvfb service
+      tags: xvfb
+      service:
+        name: xvfb
+        state: started
+
+    - name: run clipbucket driver
+      shell: >
+        python /etc/ansible/roles/role_under_test/tests/drive_web_flow_main.py \
+          --username {{ clipbucket_admin_user }} \
+          --password {{ clipbucket_admin_password }}
+      environment:
+        - DISPLAY: "{{ virtual_display }}"

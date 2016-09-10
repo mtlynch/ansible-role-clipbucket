@@ -29,13 +29,13 @@ sudo docker exec "${container_id}" \
 # Ansible syntax check.
 sudo docker exec "${container_id}" \
   env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
+  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml \
     --syntax-check
 
 # Ansible lint check.
 sudo docker exec "${container_id}" \
   env TERM=xterm \
-  ansible-lint /etc/ansible/roles/role_under_test/tests/test.yml \
+  ansible-lint /etc/ansible/roles/role_under_test/tests/install.yml \
     --exclude /etc/ansible/roles/geerlingguy.apache \
     --exclude /etc/ansible/roles/geerlingguy.php \
     --exclude /etc/ansible/roles/pcextreme.mariadb
@@ -43,28 +43,22 @@ sudo docker exec "${container_id}" \
 # Check that role installs successfully.
 sudo docker exec "${container_id}" \
   env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml
+  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml
 
 # Test role idempotence.
 idempotence_file=$(mktemp)
 sudo docker exec "${container_id}" \
   env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml \
+  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml \
   | tee "${idempotence_file}"
 grep -q 'changed=0.*failed=0' "${idempotence_file}" && \
   (echo 'Idempotence test: pass' && exit 0) || \
   (echo 'Idempotence test: fail' && exit 1)
 
-# Check that Clipbucket landing page is up
-print_ip_python=$(echo "import sys, json;
-print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']")
-container_ip=$(sudo docker inspect "${container_id}" | \
-  python -c "${print_ip_python}")
-echo "Container IP Address:" "${container_ip}"
-curl -s "${container_ip}"  \
-  | grep "Login" && \
-  (echo 'Landing page test: pass' && exit 0) || \
-  (echo 'Landing page test: fail' && exit 1)
+# Check that ClipBucket web flows work.
+sudo docker exec "${container_id}" \
+  env TERM=xterm \
+  ansible-playbook /etc/ansible/roles/role_under_test/tests/test_web_flows.yml
 
 # Clean up
 sudo docker stop "${container_id}"
