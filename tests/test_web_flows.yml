@@ -7,7 +7,7 @@
   vars_files:
     - test_secrets.yml
   roles:
-    - arknoll.firefox
+    - { role: tschifftner.firefox }
   tasks:
     - name: install apt packages
       apt:

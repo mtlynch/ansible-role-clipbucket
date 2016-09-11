@@ -2,4 +2,4 @@
 - src: pcextreme.mariadb
 - src: geerlingguy.apache
 - src: geerlingguy.php
-- src: arknoll.firefox
+- src: tschifftner.firefox
