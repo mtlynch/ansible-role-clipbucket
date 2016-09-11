@@ -51,10 +51,6 @@ class ClipBucketDriver(object):
             try:
                 alert_element = module_element.find_element_by_class_name(
                     'alert')
-                # Ignore missing Mp4box module for now.
-                # https://github.com/mtlynch/ansible-role-clipbucket/issues/24
-                if alert_element.text.startswith('Mp4box'):
-                  continue
                 if alert_element:
                     raise ClipBucketModuleError(alert_element.text)
             except exceptions.NoSuchElementException:
