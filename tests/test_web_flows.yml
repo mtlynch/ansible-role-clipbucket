@@ -6,15 +6,13 @@
     - virtual_display: :1
   vars_files:
     - test_secrets.yml
-  roles:
-    - arknoll.firefox
   tasks:
     - name: install apt packages
       apt:
         name: "{{ item }}"
         state: present
-        update_cache: yes
       with_items:
+        - firefox
         - python
         - python-pip
         - xvfb
