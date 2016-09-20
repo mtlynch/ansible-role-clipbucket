@@ -8,6 +8,15 @@ env:
 services:
   - docker
 
+install:
+  - pip install ansible==2.1.1.0
+
+  # Check ansible version
+  - ansible --version
+
+  # Disable host key checking
+  - printf '[defaults]\nhost_key_checking = False' > ansible.cfg
+
 script:
   - ./build
 

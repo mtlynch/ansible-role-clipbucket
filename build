@@ -3,6 +3,10 @@
 # Exit immediately on error
 set -e
 
+export DISPLAY=":1"
+ansible-playbook --connection local -i "localhost," tests/install_selenium.yml \
+  --extra-vars "virtual_display=${DISPLAY}"
+
 # Pull existing container
 sudo docker pull ${distribution}:${version}
 
@@ -41,9 +45,13 @@ sudo docker exec "${container_id}" \
     --exclude /etc/ansible/roles/pcextreme.mariadb
 
 # Check that role installs successfully.
+export admin_user="testadmin"
+export admin_password="testpw123"
 sudo docker exec "${container_id}" \
   env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml
+  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml \
+    --extra-vars "clipbucket_admin_user=${admin_user}" \
+    --extra-vars "clipbucket_admin_password=${admin_password}"
 
 # Test role idempotence.
 idempotence_file=$(mktemp)
@@ -55,10 +63,17 @@ grep -q 'changed=0.*failed=0' "${idempotence_file}" && \
   (echo 'Idempotence test: pass' && exit 0) || \
   (echo 'Idempotence test: fail' && exit 1)
 
-# Check that ClipBucket web flows work.
-sudo docker exec "${container_id}" \
-  env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/test_web_flows.yml
+# Check that Clipbucket landing page is up
+print_ip_python=$(echo "import sys, json;
+print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']")
+container_ip=$(sudo docker inspect "${container_id}" | \
+  python -c "${print_ip_python}")
+echo "Container IP Address:" "${container_ip}"
+
+python tests/drive_web_flow_main.py \
+  --url http://"${container_ip}" \
+  --username "${admin_user}" \
+  --password "${admin_password}"
 
 # Clean up
 sudo docker stop "${container_id}"
