@@ -72,7 +72,7 @@ ansible-playbook --connection local -i "localhost," tests/install_selenium.yml \
   --extra-vars "virtual_display=${DISPLAY}"
 
 # Test the ClipBucket web UI flow.
-python tests/drive_web_flow_main.py \
+python tests/clipbucket_driver/main.py \
   --url http://"${container_ip}" \
   --username "${admin_user}" \
   --password "${admin_password}"
