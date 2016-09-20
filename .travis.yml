@@ -14,9 +14,6 @@ install:
   # Check ansible version
   - ansible --version
 
-  # Disable host key checking
-  - printf '[defaults]\nhost_key_checking = False' > ansible.cfg
-
 script:
   - ./build
 
