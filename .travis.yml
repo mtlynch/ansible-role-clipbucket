@@ -8,6 +8,12 @@ env:
 services:
   - docker
 
+install:
+  - pip install ansible==2.1.1.0
+
+  # Check ansible version
+  - ansible --version
+
 script:
   - ./build
 
