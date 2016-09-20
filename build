@@ -3,10 +3,6 @@
 # Exit immediately on error
 set -e
 
-export DISPLAY=":1"
-ansible-playbook --connection local -i "localhost," tests/install_selenium.yml \
-  --extra-vars "virtual_display=${DISPLAY}"
-
 # Pull existing container
 sudo docker pull ${distribution}:${version}
 
@@ -70,6 +66,12 @@ container_ip=$(sudo docker inspect "${container_id}" | \
   python -c "${print_ip_python}")
 echo "Container IP Address:" "${container_ip}"
 
+# Install Selenium and dependencies.
+export DISPLAY=":1"
+ansible-playbook --connection local -i "localhost," tests/install_selenium.yml \
+  --extra-vars "virtual_display=${DISPLAY}"
+
+# Test the ClipBucket web UI flow.
 python tests/drive_web_flow_main.py \
   --url http://"${container_ip}" \
   --username "${admin_user}" \
