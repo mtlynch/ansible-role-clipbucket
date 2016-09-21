@@ -29,15 +29,6 @@
     name: flvtool2
     state: present
 
-- name: create a symlink for ClipBucket to find ffmpeg and MP4Box
-  file:
-    path: "/usr/local/bin/{{ item }}"
-    src: "/usr/bin/{{ item }}"
-    state: link
-  with_items:
-    - ffmpeg
-    - MP4Box
-
 - name: install the Python MySQLB module
   pip: name=MySQL-python
 
