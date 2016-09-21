@@ -57,6 +57,9 @@ class ClipBucketDriver(object):
         self.get('/admin_area/cb_mod_check.php')
 
         for module_element in self._driver.find_elements_by_class_name('well'):
+            ui.WebDriverWait(
+                self._driver, TIMEOUT).until(
+                expected_conditions.visibility_of(module_element))
             try:
                 alert_element = module_element.find_element_by_class_name(
                     'alert')
