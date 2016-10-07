@@ -1,7 +1,6 @@
 #!/bin/sh
 
-export distribution=ubuntu
-export version=14.04
+export distro=ubuntu1404
 export init=/sbin/init
 
 bash -x ./build
