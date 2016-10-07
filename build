@@ -10,7 +10,7 @@ sudo docker pull geerlingguy/docker-${distro}-ansible:latest
 sudo docker build \
   --rm=true \
   --file=tests/Dockerfile.${distro} \
-   --tag=${distro}:ansible tests
+  --tag=${distro}:ansible tests
 
 # Run container in detached state
 id_file=$(mktemp)
