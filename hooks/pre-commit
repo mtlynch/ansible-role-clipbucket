@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export distribution=ubuntu
 export version=14.04
