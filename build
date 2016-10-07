@@ -7,17 +7,18 @@ set -e
 sudo docker pull geerlingguy/docker-${distro}-ansible:latest
 
 # Customize container
+container_tag=${distro}:ansible
 sudo docker build \
   --rm=true \
   --file=tests/Dockerfile.${distro} \
-  --tag=${distro}:ansible tests
+  --tag=${container_tag} tests
 
 # Run container in detached state
 id_file=$(mktemp)
 sudo docker run \
   --detach \
   --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
-  geerlingguy/docker-${distro}-ansible:latest ${init} > "${id_file}"
+  ${container_tag} ${init} > "${id_file}"
 container_id="$(cat $id_file)"
 echo "Container ID:" "${container_id}"
 
