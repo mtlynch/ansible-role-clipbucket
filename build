@@ -58,11 +58,6 @@ container_ip=$(sudo docker inspect "${container_id}" | \
   python -c "${print_ip_python}")
 echo "Container IP Address:" "${container_ip}"
 
-# Install Selenium and dependencies.
-export DISPLAY=":1"
-ansible-playbook --connection local -i "localhost," tests/install_selenium.yml \
-  --extra-vars "virtual_display=${DISPLAY}"
-
 # Test the ClipBucket web UI flow.
 python tests/clipbucket_driver/main.py \
   --url http://"${container_ip}" \

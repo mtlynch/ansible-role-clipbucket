@@ -29,7 +29,7 @@ class ClipBucketModuleError(Error):
 class ClipBucketDriver(object):
 
     def __init__(self, base_url):
-        self._driver = webdriver.Firefox()
+        self._driver = webdriver.Chrome()
         self._base_url = base_url
 
     def get(self, relative_url):
