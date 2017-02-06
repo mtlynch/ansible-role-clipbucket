@@ -34,3 +34,4 @@
     - name: install selenium
       pip:
         name: selenium
+        version: 2.53.6
