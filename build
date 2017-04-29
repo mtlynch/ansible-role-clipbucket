@@ -26,6 +26,11 @@ sudo docker exec "${container_id}" \
   ansible-galaxy install \
     -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 
+# Print ansible version.
+sudo docker exec "${container_id}" \
+  env TERM=xterm \
+  ansible --version
+
 # Ansible syntax check.
 sudo docker exec "${container_id}" \
   env TERM=xterm \
