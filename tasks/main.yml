@@ -21,8 +21,6 @@
 
 - name: install ImageMagick php modules
   command: php5enmod imagick
-  args:
-    creates: "{{ php_extension_conf_paths[2] }}/20-imagick.ini"
 
 - name: install FLVTool2
   gem:
