@@ -51,14 +51,13 @@
     state: absent
 
 - name: fix config script
-  lineinfile:
+  replace:
     dest: "{{ clipbucket_sql_dir }}/configs.sql"
-    regexp: "vbrate_hd"
-    line: "(2260, 'vbrate_hd', '500000');"
-    state: present
+    regexp: "^\\([0-9]+, "
+    replace: "(NULL, "
 
 - name: fix user_levels script
   lineinfile:
     dest: "{{ clipbucket_sql_dir }}/user_levels.sql"
-    regexp: "allow_manage_user_level"
+    regexp: "allow_manage_user_level.[^;]"
     state: absent
