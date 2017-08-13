@@ -4,8 +4,8 @@ mysql_root_password: root
 
 clipbucket_site_domain: example.com
 clipbucket_site_alias: www.{{ clipbucket_site_domain }}
-# 4476 => ClipBucket 2.8.1 Stable
-clipbucket_git_version: 4476
+# 4829 => ClipBucket 2.8.3
+clipbucket_git_version: 4829
 clipbucket_tmp_path: /tmp/clipbucket
 clipbucket_path: /var/www/clipbucket
 clipbucket_install_dir: "{{ clipbucket_path }}/cb_install"
