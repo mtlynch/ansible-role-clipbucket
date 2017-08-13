@@ -1,86 +1,83 @@
 #!/bin/sh
 
-# Exit immediately on error
+# Exit immediately on error.
 set -e
 
-echo "FROM geerlingguy/docker-${distro}-ansible:latest" > tests/Dockerfile
-echo "EXPOSE 80" >> tests/Dockerfile
+# Echo to console.
+set -x
 
-# Customize container
-container_tag=${distro}:ansible
-sudo docker build \
+cd tests/
+
+envsubst '${distro}' < Dockerfile.template > Dockerfile
+
+# Customize container.
+container_tag="${distro}:ansible"
+docker build \
   --rm=true \
-  --tag=${container_tag} tests
+  --tag="${container_tag}" .
 
 # Run container in detached state
 id_file=$(mktemp)
-sudo docker run \
+DISPLAY=":1"
+docker run \
   --detach \
   --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
+  -w "/tmp" \
+  -e "DISPLAY=${DISPLAY}" \
   ${container_tag} ${init} > "${id_file}"
 container_id="$(cat $id_file)"
 echo "Container ID:" "${container_id}"
 
-# Install dependencies.
-sudo docker exec "${container_id}" \
-  ansible-galaxy install \
-    -r /etc/ansible/roles/role_under_test/tests/requirements.yml
+printf "${container_id} ansible_connection=docker\n" > hosts
 
 # Print ansible version.
-sudo docker exec "${container_id}" \
-  env TERM=xterm \
-  ansible --version
+ansible --version
+
+# Create a symlink to the role under test (removing previous if it existed)
+mkdir -p roles
+rm roles/role_under_test || true
+ln -s ../../ roles/role_under_test
+
+# Install dependencies.
+ansible-galaxy install \
+  -r roles/role_under_test/tests/requirements.yml
 
 # Ansible syntax check.
-sudo docker exec "${container_id}" \
-  env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml \
-    --syntax-check
+ansible-playbook install.yml --syntax-check
 
 # Check that role installs successfully.
 export admin_user="testadmin"
 export admin_password="testpw123"
-sudo docker exec "${container_id}" \
-  env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml \
-    --extra-vars "clipbucket_admin_user=${admin_user}" \
-    --extra-vars "clipbucket_admin_password=${admin_password}"
+ansible-playbook install.yml \
+  --extra-vars "clipbucket_admin_user=${admin_user}" \
+  --extra-vars "clipbucket_admin_password=${admin_password}"
 
 # Test role idempotence.
 idempotence_file=$(mktemp)
-sudo docker exec "${container_id}" \
-  env TERM=xterm \
-  ansible-playbook /etc/ansible/roles/role_under_test/tests/install.yml \
+ansible-playbook install.yml \
+  --extra-vars "clipbucket_admin_user=${admin_user}" \
+  --extra-vars "clipbucket_admin_password=${admin_password}" \
   | tee "${idempotence_file}"
 grep -q 'changed=0.*failed=0' "${idempotence_file}" && \
   (echo 'Idempotence test: pass' && exit 0) || \
   (echo 'Idempotence test: fail' && exit 1)
 
-# Check that Clipbucket landing page is up
-print_ip_python=$(echo "import sys, json;
-print json.load(sys.stdin)[0]['NetworkSettings']['IPAddress']")
-container_ip=$(sudo docker inspect "${container_id}" | \
-  python -c "${print_ip_python}")
-echo "Container IP Address:" "${container_ip}"
-
 # Install Selenium and dependencies.
-export DISPLAY=":1"
-ansible-playbook --connection local -i "localhost," tests/install_selenium.yml \
+
+ansible-playbook install_selenium.yml \
   --extra-vars "virtual_display=${DISPLAY}"
 
 # Test the ClipBucket web UI flow.
-python tests/clipbucket_driver/main.py \
-  --url http://"${container_ip}" \
-  --username "${admin_user}" \
-  --password "${admin_password}"
+docker exec --user selenium -it "${container_id}" \
+  python /etc/ansible/roles/role_under_test/clipbucket_driver/main.py \
+    --url http://127.0.0.1/ \
+    --username "${admin_user}" \
+    --password "${admin_password}"
 
 # Clean up
-sudo docker stop "${container_id}"
-sudo docker rm "${container_id}"
-rm tests/Dockerfile
+docker stop "${container_id}"
+docker rm "${container_id}"
+rm Dockerfile
 
 # Check role for linter errors.
-ansible-lint /etc/ansible/roles/role_under_test/tests/install.yml \
-  --exclude /etc/ansible/roles/geerlingguy.apache \
-  --exclude /etc/ansible/roles/geerlingguy.php \
-  --exclude /etc/ansible/roles/pcextreme.mariadb
+ansible-lint install.yml -t role_under_test
