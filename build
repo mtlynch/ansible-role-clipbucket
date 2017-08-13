@@ -38,12 +38,12 @@ mkdir -p roles
 rm roles/role_under_test || true
 ln -s ../../ roles/role_under_test
 
-# Ansible syntax check.
-ansible-playbook install.yml --syntax-check
-
 # Install dependencies.
 ansible-galaxy install \
   -r roles/role_under_test/tests/requirements.yml
+
+# Ansible syntax check.
+ansible-playbook install.yml --syntax-check
 
 # Check that role installs successfully.
 export admin_user="testadmin"
