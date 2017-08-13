@@ -113,13 +113,13 @@
 # Apply workarounds for errors in SQL scripts, see:
 # https://github.com/arslancb/clipbucket/issues/223
 - include: fix-sql-scripts.yml
-  when: "{{ install_file.stat.exists }}"
+  when: install_file.stat.exists
 
 - name: copy admin script
   template:
     src: add_admin.sql.j2
     dest: "{{ clipbucket_sql_dir }}/add_admin.sql"
-  when: "{{ install_file.stat.exists }}"
+  when: install_file.stat.exists
 
 - name: replace table prefix placeholder string in SQL scripts
   replace:
@@ -127,7 +127,7 @@
     regexp: "{tbl_prefix}_?"
     replace: "{{ clipbucket_mysql_prefix }}"
   with_items: "{{ clipbucket_sql_scripts }}"
-  when: "{{ install_file.stat.exists }}"
+  when: install_file.stat.exists
 
 - name: run SQL scripts
   mysql_db:
@@ -135,7 +135,7 @@
     state: import
     target: "{{ item }}"
   with_items: "{{ clipbucket_sql_scripts }}"
-  when: "{{ install_file.stat.exists }}"
+  when: install_file.stat.exists
 
 - name: remove install files
   file:

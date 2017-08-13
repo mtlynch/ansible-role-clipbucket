@@ -1,4 +1,7 @@
 *.swp
+*.swo
 *.retry
 *.pyc
 tests/Dockerfile
+tests/hosts
+tests/roles

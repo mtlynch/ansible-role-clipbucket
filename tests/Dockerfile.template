@@ -1,0 +1,13 @@
+FROM geerlingguy/docker-${distro}-ansible:latest
+
+ENV GECKODRIVER_VERSION 0.18.0
+ENV GECKODRIVER_PACKAGE geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
+ENV GECKODRIVER_URL https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/$GECKODRIVER_PACKAGE
+
+EXPOSE 80
+
+WORKDIR /tmp
+
+RUN apt-get update && apt-get install -y wget
+
+RUN wget $GECKODRIVER_URL && tar xvzf $GECKODRIVER_PACKAGE --directory /bin

@@ -1,7 +1,6 @@
 ---
-- hosts: localhost
-  become_method: sudo
-  become: true
+- hosts: all
+  remote_user: root
   vars:
     # Name of virtual display in which to run browser (via xvfb).
     - virtual_display: :1
@@ -25,13 +24,19 @@
     - name: start xvfb service
       service:
         name: xvfb
-        state: started
+        state: reloaded
+
+    - name: add selenium user
+      user:
+        name: selenium
 
 # Install selenium as non-root user so that it's available to non-root Python
 # scripts.
-- hosts: localhost
+- hosts: all
+  remote_user: selenium
   tasks:
     - name: install selenium
       pip:
         name: selenium
-        version: 2.53.6
+        version: 3.5.0
+        extra_args: --user
