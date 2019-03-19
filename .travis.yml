@@ -1,15 +1,15 @@
 ---
 sudo: required
+dist: trusty
+language: python
 env:
   global:
     - ANSIBLE_ROLES_PATH: ~/roles
   matrix:
     - distro: ubuntu1404
       init: /sbin/init
-
 services:
   - docker
-
 install:
   - pip install ansible==2.3.2
   - pip install ansible-lint==3.4.10
